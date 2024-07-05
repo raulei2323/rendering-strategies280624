@@ -1,25 +1,14 @@
 import { getProducts } from "@/lib/api";
 import { useEffect, useState } from "react";
 
-export default function SSR(props) {
-    const [products, setProducts] = useState([])
-
-    useEffect(() => {
-        getProducts()
-        .then((products) => setProducts(products))
-        .catch((err) => console.error(err))
-
-    }, [])
-
-    function clickHandler() {
+export default function SSR({products}) {
+       function clickHandler() {
         const x = localStorage.getItem("x")
         console.log("x",x)
     }
 
     return(
         <main>
-            <p>{props.message}</p>
-            <p>{props.text}</p>
             <h1>Productos:</h1>
 
             <button onClick={clickHandler}>Dame click perro</button>
@@ -35,13 +24,19 @@ export default function SSR(props) {
         </main>
     )
 }
+//?server side renderding
+//?se ejecuta en cada request a la pagina
+//?se ejecuta en el servidor
 
-export function getServerSideProps() {
+export async function getServerSideProps() {
     console.log("Hola desde getServerSideProps")
+
+    const products = await getProducts()
     return{
         props: {
             message: "Hola desde el server",
             text: "Mucho texto",
+            products: products,
         },
     }
 }
